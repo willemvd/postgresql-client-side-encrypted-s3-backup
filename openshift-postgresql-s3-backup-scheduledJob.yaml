@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: List
+items:
+- apiVersion: batch/v2alpha1
+  kind: ScheduledJob
+  metadata:
+    name: postgresql-s3-hourly-backup
+  spec:
+    # every start of the hour
+    schedule: "0 * * * *"
+    jobTemplate:
+      spec:
+        template:
+          spec:
+            # 30 minutes timeout
+            activeDeadlineSeconds: 1800
+            containers:
+            - name: postgresql-s3-hourly-backup
+              image: willemvd/postgresql-client-side-encrypted-s3-backup
+              env:
+              - name: PGDATABASE
+                value:
+              - name: PGHOST
+                value:
+              - name: PGPORT
+                value: "5432"
+              - name: PGUSER
+                value:
+              - name: PGPASSWORD
+                value:
+              - name: ENCRYPTION_PASS_PHRASE
+                value:
+              - name: OPENSSL_CIPHER_TYPE
+                value: aes-256-cbc
+              - name: AWS_ACCESS_KEY_ID
+                value:
+              - name: AWS_SECRET_ACCESS_KEY
+                value:
+              - name: AWS_DEFAULT_REGION
+                value:
+              - name: S3_BUCKET_NAME
+                value:
+              - name: BACKUP_TYPE
+                value: hourly
+            restartPolicy: OnFailure
+- apiVersion: batch/v2alpha1
+  kind: ScheduledJob
+  metadata:
+    name: postgresql-s3-daily-backup
+  spec:
+    # daily at 02:30 (do not run at the whole hour to prevent potential issues with hourly run)
+    schedule: "30 2 * * *"
+    jobTemplate:
+      spec:
+        template:
+          spec:
+            # 30 minutes timeout
+            activeDeadlineSeconds: 1800
+            containers:
+            - name: postgresql-s3-daily-backup
+              image: willemvd/postgresql-client-side-encrypted-s3-backup
+              env:
+              - name: PGDATABASE
+                value:
+              - name: PGHOST
+                value:
+              - name: PGPORT
+                value: "5432"
+              - name: PGUSER
+                value:
+              - name: PGPASSWORD
+                value:
+              - name: ENCRYPTION_PASS_PHRASE
+                value:
+              - name: OPENSSL_CIPHER_TYPE
+                value: aes-256-cbc
+              - name: AWS_ACCESS_KEY_ID
+                value:
+              - name: AWS_SECRET_ACCESS_KEY
+                value:
+              - name: AWS_DEFAULT_REGION
+                value:
+              - name: S3_BUCKET_NAME
+                value:
+              - name: BACKUP_TYPE
+                value: daily
+            restartPolicy: OnFailure
