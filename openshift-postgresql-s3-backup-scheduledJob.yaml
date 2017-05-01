@@ -37,6 +37,7 @@ items:
           spec:
             # 30 minutes timeout
             activeDeadlineSeconds: 1800
+            restartPolicy: OnFailure
             containers:
             - name: postgresql-s3-hourly-backup
               image: willemvd/postgresql-client-side-encrypted-s3-backup:1.1.0
@@ -100,7 +101,8 @@ items:
                 value: ""
               - name: SMTP_TO
                 value: ""
-            restartPolicy: OnFailure
+              - name: ALWAYS_EXIT_ZERO
+                value: "true"
 - apiVersion: batch/v2alpha1
   kind: ScheduledJob
   metadata:
@@ -114,6 +116,7 @@ items:
           spec:
             # 30 minutes timeout
             activeDeadlineSeconds: 1800
+            restartPolicy: OnFailure
             containers:
             - name: postgresql-s3-daily-backup
               image: willemvd/postgresql-client-side-encrypted-s3-backup:1.1.0
@@ -177,4 +180,5 @@ items:
                 value: ""
               - name: SMTP_TO
                 value: ""
-            restartPolicy: OnFailure
+              - name: ALWAYS_EXIT_ZERO
+                value: "true"

@@ -41,4 +41,6 @@ SMTP_AUTH_USER=<username to login to the SMTP server>
 SMTP_AUTH_PASSWORD=<password for the SMTP user>
 SMTP_FROM=<name and email of the sender in the format: Name <full email adres> >
 SMTP_TO=<email address to send to, multiple addresses can be used with a comma seperated list>
+
+ALWAYS_EXIT_ZERO=<when true, always return 0 as exit code to prevent failure detection by other scripts (prevent restarts and spam mailing)>
 ```

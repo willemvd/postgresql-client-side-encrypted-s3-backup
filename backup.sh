@@ -2,8 +2,19 @@
 
 set -e
 
+handleFailureExitCode() {
+    if [  "x$ALWAYS_EXIT_ZERO" = "xtrue" ]; then
+        exit 0
+    fi
+
+    # abort
+    exit 1
+}
+
 handleError() {
     MSG="Failed to run backup of database '$PGDATABASE' from '$PGHOST:$PGPORT/$PGDATABASE' with user '$PGUSER' to 's3://$S3_BUCKET_NAME/$BACKUP_TYPE/$BACKUP_FILE_NAME'"
+
+    echo ${MSG}
 
     if [  "x$ENABLE_ERROR_MAIL" = "xtrue" ]; then
 
@@ -13,7 +24,6 @@ handleError() {
         fi
 
         echo ${MSG} | \
-
         mailx -v -s "$ERROR_MAIL_SUBJECT" \
         -S smtp="$SMTP_HOST:$SMTP_PORT" \
         ${OPTS} \
@@ -21,13 +31,10 @@ handleError() {
         -S smtp-auth-user="$SMTP_AUTH_USER" \
         -S smtp-auth-password="$SMTP_AUTH_PASSWORD" \
         -r "$SMTP_FROM" \
-        $SMTP_TO
-    else
-        echo ${MSG}
+        $SMTP_TO || handleFailureExitCode
     fi
 
-    # abort
-    exit 1
+    handleFailureExitCode
 }
 
 DATE=$(date +%Y-%m-%d-%H-%M-%S)
