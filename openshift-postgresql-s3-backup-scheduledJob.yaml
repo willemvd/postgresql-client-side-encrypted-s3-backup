@@ -16,6 +16,14 @@ items:
   data:
     # don't forget to base64 encode your values
     encryption-pass-phrase: ""
+- apiVersion: "v1"
+  kind: "Secret"
+  metadata:
+    name: "smtp-authentication-secret-production"
+  data:
+    # don't forget to base64 encode your values
+    smtp-user: ""
+    smtp-password: ""
 - apiVersion: batch/v2alpha1
   kind: ScheduledJob
   metadata:
@@ -31,7 +39,7 @@ items:
             activeDeadlineSeconds: 1800
             containers:
             - name: postgresql-s3-hourly-backup
-              image: willemvd/postgresql-client-side-encrypted-s3-backup
+              image: willemvd/postgresql-client-side-encrypted-s3-backup:1.1.0
               env:
               - name: PGDATABASE
                 value:
@@ -66,6 +74,32 @@ items:
                 value:
               - name: BACKUP_TYPE
                 value: hourly
+              - name: ENABLE_ERROR_MAIL
+                value: "true"
+              - name: ERROR_MAIL_SUBJECT
+                value: Failed to run database backup
+              - name: SMTP_HOST
+                value: ""
+              - name: SMTP_PORT
+                value: ""
+              - name: SMTP_STARTTLS
+                value: "true"
+              - name: SMTP_AUTH
+                value:
+              - name: SMTP_AUTH_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: smtp-authentication-secret-production
+                    key: smtp-user
+              - name: SMTP_AUTH_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: smtp-authentication-secret-production
+                    key: smtp-password
+              - name: SMTP_FROM
+                value: ""
+              - name: SMTP_TO
+                value: ""
             restartPolicy: OnFailure
 - apiVersion: batch/v2alpha1
   kind: ScheduledJob
@@ -82,7 +116,7 @@ items:
             activeDeadlineSeconds: 1800
             containers:
             - name: postgresql-s3-daily-backup
-              image: willemvd/postgresql-client-side-encrypted-s3-backup
+              image: willemvd/postgresql-client-side-encrypted-s3-backup:1.1.0
               env:
               - name: PGDATABASE
                 value:
@@ -117,4 +151,30 @@ items:
                 value:
               - name: BACKUP_TYPE
                 value: daily
+              - name: ENABLE_ERROR_MAIL
+                value: "true"
+              - name: ERROR_MAIL_SUBJECT
+                value: Failed to run database backup
+              - name: SMTP_HOST
+                value: ""
+              - name: SMTP_PORT
+                value: ""
+              - name: SMTP_STARTTLS
+                value: "true"
+              - name: SMTP_AUTH
+                value:
+              - name: SMTP_AUTH_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: smtp-authentication-secret-production
+                    key: smtp-user
+              - name: SMTP_AUTH_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: smtp-authentication-secret-production
+                    key: smtp-password
+              - name: SMTP_FROM
+                value: ""
+              - name: SMTP_TO
+                value: ""
             restartPolicy: OnFailure
