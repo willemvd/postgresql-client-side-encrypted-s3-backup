@@ -40,7 +40,7 @@ items:
             restartPolicy: OnFailure
             containers:
             - name: postgresql-s3-hourly-backup
-              image: willemvd/postgresql-client-side-encrypted-s3-backup:1.1.0
+              image: willemvd/postgresql-client-side-encrypted-s3-backup:1.1.1
               env:
               - name: PGDATABASE
                 value:
@@ -119,7 +119,7 @@ items:
             restartPolicy: OnFailure
             containers:
             - name: postgresql-s3-daily-backup
-              image: willemvd/postgresql-client-side-encrypted-s3-backup:1.1.0
+              image: willemvd/postgresql-client-side-encrypted-s3-backup:1.1.1
               env:
               - name: PGDATABASE
                 value:
